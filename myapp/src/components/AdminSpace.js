@@ -7,6 +7,7 @@ import ListeUtilisateurs from "./ListeUtilisateurs";
 import { useParams } from "react-router-dom";
 import AddUser from "./AddUser";
 import Addemploye from "./Addemploye";
+import Navbar from "./Navbar";
 export default function AdminSpace() {
   const { id } = useParams();
   const iduser = parseInt(id);
@@ -18,8 +19,10 @@ export default function AdminSpace() {
   const [data, setdata] = useState([]);
   const [userpermissions, setuserpermissions] = useState([]);
   const [permission, setpermission] = useState();
+  const [show, setshow] = useState();
   // get all employes
   const showemployes = () => {
+    setshow(true);
     const per = userpermissions.find(
       (element) =>
         element.id_permission === 2 &&
@@ -29,6 +32,7 @@ export default function AdminSpace() {
     per !== undefined && setemploye(true);
     setuser(false);
     permission && setemploye(true);
+    per === undefined && setshow(false);
     setadduser(false);
     setaddemploye(false);
   };
@@ -54,7 +58,7 @@ export default function AdminSpace() {
       navigate("/");
     });
   };
-  // get all users
+  // get user by id
   const getdata = async () => {
     const response = await fetch(`http://localhost:3001/users/${id}`, {
       method: "GET",
@@ -72,6 +76,7 @@ export default function AdminSpace() {
   }, []);
   // check if user has permission to display the list of all users
   const showusers = () => {
+    setshow(true);
     const per = userpermissions.find(
       (element) =>
         element.id_permission === 1 &&
@@ -79,13 +84,14 @@ export default function AdminSpace() {
         element.user_permission_value === 1
     );
     per !== undefined && setuser(true);
-
+    per === undefined && setshow(false);
     setemploye(false);
     setadduser(false);
     setaddemploye(false);
   };
   // check if user has permission to add a new user
   const addUser = () => {
+    setshow(true);
     const per = userpermissions.find(
       (element) =>
         element.id_permission === 7 &&
@@ -93,12 +99,14 @@ export default function AdminSpace() {
         element.user_permission_value === 1
     );
     per !== undefined && setadduser(true);
+    per === undefined && setshow(false);
     setuser(false);
     setemploye(false);
     setaddemploye(false);
   };
   // check if user has permission to add a new employe
   const addEmploye = () => {
+    setshow(true);
     const per = userpermissions.find(
       (element) =>
         element.id_permission === 8 &&
@@ -106,6 +114,7 @@ export default function AdminSpace() {
         element.user_permission_value === 1
     );
     per !== undefined && setaddemploye(true);
+    per === undefined && setshow(false);
     setuser(false);
     setemploye(false);
     setadduser(false);
@@ -113,17 +122,18 @@ export default function AdminSpace() {
 
   return (
     <div style={{ position: "relative" }}>
-      <h3 className="text-center mt-3">
+      <Navbar id={iduser} />
+      {/* <h3 className="text-center mt-3">
         Bienvenue {data.user_firstname}
         <span style={{ marginLeft: "10px" }}>{data.user_lastname} </span>
-      </h3>
+      </h3> */}
       <div style={{ position: "absolute", right: 10, top: 5 }}>
         {" "}
         <button className="btn btn-primary" onClick={logout}>
           LogOut
         </button>
       </div>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", marginTop: "50px" }}>
         <div style={{ marginLeft: "30px" }}>
           <button className="btn btn-primary" onClick={showusers}>
             Liste des Utilisateurs
@@ -148,6 +158,12 @@ export default function AdminSpace() {
       <div>
         {user && (
           <ListeUtilisateurs id={iduser} permissions={userpermissions} />
+        )}
+        {show === false && (
+          <div style={{marginTop:"60px"}}>
+            {" "}
+            <h4>Vous n'avez pas le droit d'accéder à cette page</h4>
+          </div>
         )}
         {employe && <ListeEmployes id={iduser} permissions={userpermissions} />}
 

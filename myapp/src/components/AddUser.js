@@ -27,7 +27,7 @@ export default function AddUser() {
       [name]: value,
     }));
   };
-// add a new user
+  // add a new user
   const adduser = async (e) => {
     e.preventDefault();
     await fetch("http://localhost:3001/add/user/", {
@@ -58,7 +58,7 @@ export default function AddUser() {
   };
   return (
     <div>
-      <div  className="col-md-4 offset-md-4"style={{ marginTop: "30px" }}>
+      <div className="col-md-4 offset-md-4" style={{ marginTop: "30px" }}>
         <h4>Ajouter un utilisateur</h4>
         <form onSubmit={(e) => adduser(e)}>
           {/* nom */}
