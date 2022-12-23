@@ -2,8 +2,11 @@ import React from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { NavLink } from "react-router-dom";
+
 const Email = () => {
   const { id } = useParams();
+  const { id_user } = useParams();
   console.log(id);
   const [data, setdata] = useState({
     code: "",
@@ -36,7 +39,7 @@ const Email = () => {
         id: user.user_id,
       }),
     }).then((response) => {
-      console.log(response);
+      document.getElementById("alertmessage").style.visibility = "visible";
     });
   };
   // useEffect
@@ -44,11 +47,11 @@ const Email = () => {
     getuser();
   }, []);
   return (
-    <div className="container" style={{ marginTop: "100px" }}>
-      <h4>
-        <span style={{ fontSize: "15px" }}>Send email to </span>
+    <div className="container" style={{ marginTop: "100px",position:"relative" }}>
+      <h2>
+        <span style={{ fontSize: "20px" }}>Envoyer une invitation à :</span>
         {user.user_email}
-      </h4>
+      </h2>
       <div class="row" style={{ marginTop: "50px" }}>
         <div className="col-sm-4 mx-auto shadow p-5">
           <p
@@ -70,9 +73,21 @@ const Email = () => {
             className="btn btn-primary btn-block "
             style={{ marginLeft: "30px" }}
           >
-            Send Mail
+            Envoyer une invitation
           </button>
         </div>
+        <div
+          class="alert alert-secondary text-success  "
+          id="alertmessage"
+          style={{ visibility: "hidden", marginTop: "40px" }}
+          role="alert"
+        >
+          Votre invitation a eté envoyée{" "}
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+      </div>
+      <div style={{ position: "absolute", bottom: "10px" }}>
+        <NavLink to={`/espace/${id_user}`}> GO BACK</NavLink>
       </div>
     </div>
   );

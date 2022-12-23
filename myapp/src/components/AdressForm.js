@@ -26,9 +26,6 @@ export default function AdressForm() {
   return (
     <div className="App">
       <div>
-        <h1>Country and It's Cities</h1>
-      </div>
-      <div>
         {countries && (
           <select onChange={(e) => fetchCities(e.target.value)}>
             <option selected hidden disabled>
@@ -55,9 +52,7 @@ export default function AdressForm() {
           </select>
         )}
       </div>
-      <div>
-        <button>Submit</button>
-      </div>
+      <div></div>
     </div>
   );
 }

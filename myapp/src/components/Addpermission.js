@@ -4,18 +4,18 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { BiCheck } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
-
-const Addpermission = () => {
+import Navbar from "./Navbar";
+const Addpermission = (props) => {
   // states
   const [permissions, setpermissions] = useState([]);
   const [role, setrole] = useState("");
   const [data, setdata] = useState([]);
   const [userpermissions, setuserpermissions] = useState([]);
   const [newpermissions, setnewpermissions] = useState(userpermissions);
-  const { id_user } = useParams();
-  const id = parseInt(id_user);
-  const { iduser2 } = useParams();
-  // get list of all permissions
+  const [languagecontent, setlanguagecontent] = useState([]);
+
+  const id = props.id;
+  console.log("id" + props.id);
   const getpermissions = async () => {
     await fetch("/permissions", {
       method: "GET",
@@ -29,7 +29,7 @@ const Addpermission = () => {
   };
   // get the list of all users
   const getdata = async () => {
-    const response = await fetch(`http://localhost:3001/users/${id_user}`, {
+    const response = await fetch(`http://localhost:3001/users/${props.id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +43,7 @@ const Addpermission = () => {
   // get  all the permissions of a user
   const getuserpermissions = async () => {
     const response = await fetch(
-      `http://localhost:3001/permissions/${id_user}`,
+      `http://localhost:3001/permissions/${props.id}`,
       {
         method: "GET",
         headers: {
@@ -54,12 +54,30 @@ const Addpermission = () => {
     const result = await response.json();
     setuserpermissions(result);
   };
+  // get language data
+  // get selected language content
+  const getlanguage = async () => {
+    const response = await fetch(
+      `http://localhost:3001/language/${props.language}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const result = await response.json();
+    setlanguagecontent(result[0]);
+    console.log("languagecont" + result);
+    // console.log("languagecont" + result);
+  };
   // useEffect
   useEffect(() => {
     getpermissions();
     getdata();
     getuserpermissions();
-  }, [newpermissions]);
+    getlanguage();
+  }, [newpermissions, props.language]);
   const addpermission = async (id_permission) => {
     const response = await fetch("/add/permissions", {
       method: "POST",
@@ -67,8 +85,8 @@ const Addpermission = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id,
         id_permission,
+        id,
       }),
     });
     const data = await response.json();
@@ -101,8 +119,8 @@ const Addpermission = () => {
             <>
               <div style={{ marginTop: "50px" }}>
                 <h5>
-                  Ajouter Permissions pour
-                  {element.id_role === 2 ? " l'employe" : " l'utilisateur"}{" "}
+                  {languagecontent.text13}
+                  {/* {element.id_role === 2 ? " l'employe" : " l'utilisateur"}{" "} */}
                 </h5>
                 <h3>
                   {element.user_firstname} {element.user_lastname}
@@ -112,16 +130,12 @@ const Addpermission = () => {
           );
         })}
 
-        <div
-          className="col-md-4 offset-md-4"
-          style={{ display: "flex", marginTop: "100px" }}
-        >
-          <table class="table" style={{ width: "70%" }}>
+        <div style={{ display: "flex", marginTop: "100px" }}>
+          <table class="table" style={{ width: "100%" }}>
             <thead>
               <tr>
                 <th scope="col">Permission</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
+                <th scope="col"> </th>
               </tr>
             </thead>
             <tbody>
@@ -159,7 +173,7 @@ const Addpermission = () => {
                                       deletepermission(e, el.id_user_permission)
                                     }
                                   >
-                                    Supprimer permission
+                                    {languagecontent.button10}
                                   </button>
                                 );
                               })}
@@ -174,7 +188,7 @@ const Addpermission = () => {
                                 addpermission(element.id_permission)
                               }
                             >
-                              Ajouter
+                              {languagecontent.button9}
                             </button>
                           </td>
                         </>
@@ -185,9 +199,6 @@ const Addpermission = () => {
               })}
             </tbody>
           </table>
-        </div>
-        <div style={{ position: "absolute", bottom: "10px", left: "70px" }}>
-          <NavLink to={`/espace/${iduser2}`}> GO BACK</NavLink>
         </div>
       </div>
     </div>

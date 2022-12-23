@@ -3,39 +3,50 @@ import { useState } from "react";
 import { setDefaultLocale } from "react-datepicker";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useEffect } from "react";
 export default function Login() {
   // states
   const [telephone, settelephone] = useState();
+  const [data, setdata] = useState([]);
   // useNavigate Hook
   const navigate = useNavigate();
   // singnIn function
   const singIn = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:3001/login/", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        telephone: telephone,
-      }),
-    });
-    const data = await response.json();
-    console.log(data);
-    if (data) {
-      navigate(`/espace/${data[0].user_id}`);
-    } else {
-      document.getElementById("alertmessage").style.visibility = "visible";
-    }
-    // .then((response) => response.json())
-    // .then((response) => navigate(`/espace/${response.user_id}`))
-    // .then((error) => {
-    //   document.getElementById("alertmessage").style.visibility = "visible";
-    //   console.log(error);
+    // const response = await fetch("http://localhost:3001/login/", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     telephone: telephone,
+    //   }),
     // });
 
-    console.log(response);
+    // const data = await response.json();
+    // if (data) navigate(`/espace/${data.user_id}`);
+    const user = data.find((element) => element.user_phone === telephone);
+    user !== undefined && navigate(`/espace/${user.user_id}`);
+    if (user === undefined)
+      document.getElementById("alertmessage").style.visibility = "visible";
   };
+  // get all users
+  // get all users
+  const getdata = async () => {
+    await fetch("https://dashboard-last-version.vercel.app/allusers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => setdata(response))
+      .then((error) => console.log(error));
+  };
+  useEffect(() => {
+    getdata();
+    console.log(data);
+  }, []);
   // const login = (e) => {
   //   e.preventDefault();
   //   axios
